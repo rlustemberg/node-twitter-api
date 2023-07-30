@@ -1,5 +1,6 @@
-# NO LONGER ACTIVELY MAINTAINED #
-Due to a lack of motivation/interest regarding node.js and the Twitter API, I am no longer actively maintaining this project. I feel like I can't provide the time/testing/code necessary to incorporate the pull requests or new changes to the Twitter API. The project and the source code will remain here on GitHub and on npm but there will no longer be any changes from my side.
+# A fork of node-twitter-api #
+While the original module is no longer maintained, and had a limited api, in my use case the only requirement is to be able to authenticate and authorize a user.
+Except for the auth functionality, the module relied upon the 'request' package (also unmaintained) for the rest of it's functionality and now has security vulnerabilities. Therefore I decided to remove the ramining funcitonality and vulnerable dependencies
 
 
 # node-twitter-api #
@@ -68,51 +69,4 @@ twitter.verifyCredentials(accessToken, accessTokenSecret, params, function(error
 ```
 In the above example, `params` is an optional object containing extra parameters to be sent to the Twitter endpoint (see https://dev.twitter.com/rest/reference/get/account/verify_credentials)
 
-## Methods ##
-(Allmost) all function names replicate the endpoints of the Twitter API 1.1.
-If you want to post a status e. g. - which is done by posting data to statuses/update - you can just do the following:
-```javascript
-twitter.statuses("update", {
-		status: "Hello world!"
-	},
-	accessToken,
-	accessTokenSecret,
-	function(error, data, response) {
-		if (error) {
-			// something went wrong
-		} else {
-			// data contains the data sent by twitter
-		}
-	}
-);
-```
 
-Most of the functions use the scheme:
-`twitter.[namespace]([type], [params], [accessToken], [accessTokenSecret], [callback]);`
-* _namespace_ is the word before the slash (e.g. "statuses", "search", "direct_messages" etc.)
-* _type_ is the word after the slash (e.g. "create", "update", "show" etc.)
-* _params_ is an object containing the parameters you want to give to twitter (refer to the Twitter API Documentation for more information)
-* _accessToken_ and _accessTokenSecret_ are the token and secret of the authenticated user
-* _callback_ is a function with the parameters _error_ (either null or an error object), _data_ (data object) and _response_ (unprocessed response from Twitter)
-
-For Timelines you can also use the function _getTimeline_ which has the following types:
-* `user` or `user_timeline` (Note that you need to either specify user_id or screen_name when using this timeline)
-* `home` or `home_timeline`
-* `mentions` or `mentions_timeline`
-* `retweets` or `retweets_of_me`
-
-For more information on the different types of timelines see https://dev.twitter.com/rest/reference/get/statuses/home_timeline (analog for the other types)
-
-For Streams you must use _getStream_ which has two instead of just one callback: a dataCallback and an endCallback. (c.f. data and end events of node's http response)
-
-## How to upload media ##
-To upload media to Twitter, call `twitter.uploadMedia(params, accessToken, accessTokenSecret, callback)` with params containing the following:
-* _media_: Either the raw binary content of the image, the binary base64 encoded (see isBase64 below) or the path to the file containing the image.
-* _isBase64_: Set to true, if media contains base64 encoded data
-For a example result see https://dev.twitter.com/rest/reference/post/media/upload. You can pass multiple media_ids to the statuses/update endpoint by seperating them with commas (e.g. "[id1],[id2],[id3],[id4]").
-
-## How to upload Video ##
-To upload video to Twitter, call `twitter.uploadVideo(params, accessToken, accessTokenSecret, callback)` with params containing the following:
-* _media_: Path to the file containing the video.
-
-You can pass media_id to the statuses/update endpoint and video will be uploaded to twitter. Please note that video should be less than 15mb or 30 sec in length.
